@@ -84,3 +84,6 @@ class Species:
             _sum += gene.fitness
 
         self.avgFitness = _sum/len(self.members)
+
+    def reproduce(self):
+        NotImplementedError("Remember to implement reproduction")

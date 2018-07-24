@@ -20,9 +20,7 @@ class Genome:
     Class for a Genome in the NEAT Algorithm
     """
     def __init__(self, _in, _out, clone=False):
-        self.inNodes = []
-        self.outNodes = []
-        self.hiddenNodes = []
+        self.nodes = []
         self.connectedNodes = []
         self.connections = []
         self.noOutputs = _out
@@ -31,11 +29,11 @@ class Genome:
 
         for i in range(_in):
             node = Node(i+1, 'input')
-            self.inNodes.append(node)
+            self.nodes.append(node)
 
         for i in range(_out):
             node = Node(i+20, 'output')
-            self.outNodes.append(node)
+            self.nodes.append(node)
         
         if not clone:
             self.add_connection(1)
@@ -45,25 +43,20 @@ class Genome:
         """
         Move an input forward through the genome (Neural Net)
         """
-        for node in self.custom_zip():
+        for node in self.nodes:
             node.clear()
 
         output = [0] * self.noOutputs
-        for i, node in enumerate(self.inNodes):
-            if node.isConnected:
+        for i, node in enumerate(self.nodes):
+            if node.nodeType == 'input':
                 node.value = _input[i]
-                connections = node.connections
-                for connect in connections:
-                    connect.forward()
-        
-        for node in self.hiddenNodes:
-            if node.isConnected:
-                connections = node.connections
-                for connect in connections:
-                    connect.forward()
+            connections = node.connections
+            for connection in connections:
+                connection.forward()
 
-        for i, node in enumerate(self.outNodes):
-            output[i] = node.value
+        for i, node in enumerate(self.nodes):
+            if node.nodeType == 'output':
+                output[i] = node.value
 
         return output
 
@@ -95,13 +88,6 @@ class Genome:
     def clear(self):
         self.steps = 0
         self.fitness = 0
-
-    def custom_zip(self):
-        arr = []
-        arr.extend(self.inNodes)
-        arr.extend(self.hiddenNodes)
-        arr.extend(self.outNodes)
-        return arr
 
     def clone(self):
         clone = Genome(len(self.inNodes), len(self.outNodes), clone=True)

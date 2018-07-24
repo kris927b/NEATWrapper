@@ -39,7 +39,15 @@ class Population:
         avgSum = self.getAvgFitnessSum()
         for s in self.species:
             newGenes.append(s.champ.clone())
-            noOfChild = int(s.avgFitness / avgSum * self.size())
+            noOfChild = int(s.avgFitness / avgSum * self.size()) - 1
+            for _ in range(noOfChild):
+                newGenes.append(s.reproduce(self.innovationNo))
+
+        while len(newGenes) < self.pop_size:
+            newGenes.append(self.species[0].reproduce(self.innovationNo))
+
+        self.population = []
+        self.population = newGenes
 
     def calcFitness(self):
         sums = 0

@@ -22,6 +22,9 @@ class Connection:
         output = max(output, 0)
         self.outNode.value += output
 
+    def __eq__(self, conn2):
+        return ((self.inNode, self.outNode) == (conn2.inNode, conn2.outNode))
+
     def __repr__(self):
         return "Connection: inNode - {}, outNode - {}, weight - {}, innovation - {}".format(
             self.inNode, self.outNode, self.weight, self.innovation
