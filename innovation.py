@@ -19,10 +19,10 @@ class Innovation:
         self.connectionsDone = []
         self.innoNo = 0
 
-    def checkConnection(self, node1, node2):
+    def checkConnection(self, node1, node2, weight=None):
         newConnection = Connection(node1,
             node2,
-            weight=random.randint(-2, 2)
+            weight=weight if weight else random.uniform(-2, 2)
         )
         gotInnovation = False
         for connection in self.connectionsDone:

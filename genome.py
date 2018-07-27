@@ -26,21 +26,28 @@ class Genome:
         self.connectedNodes = []
         self.connections = []
         self.noOutputs = _out
+        self.noInputs = _in
+        self.nextNode = 1
+        self.maxInLayer = 10
+        self.currLayer = 1
+        self.currNodesInLayer = 0
         self.steps = 0
         self.fitness = 0
+
 
         for i in range(_in):
             node = Node(i+1, 'input', layer=0)
             self.nodes.append(node)
             self.inNodes.append(node)
+            self.nextNode += 1
 
         for i in range(_out):
             node = Node(i+20, 'output', layer=20)
             self.nodes.append(node)
             self.outNodes.append(node)
+            self.nextNode += 1
         
         if not clone:
-            self.add_connection(innovationHistory)
             self.add_connection(innovationHistory)
 
 
@@ -109,6 +116,32 @@ class Genome:
 
         return False
 
+    def addNode(self, innovationHistory):
+        """
+        Create a new node in the genome
+        """
+        randomConnection = random.randint(0, len(self.connections)-1)
+        connect = self.connections[randomConnection]
+        connect.enabled = False
+
+        newNodeNo = self.nextNode
+        newNode = Node(newNodeNo, 'hidden', layer = self.currLayer)
+        self.nodes.append(newNode)
+
+        newConnection1 = innovationHistory.checkConnection(newNode, connect.outNode, weight=connect.weight)
+        self.connections.append(newConnection1)
+        self.connectedNodes.append((len(self.nodes)-1, self.nodes.index(connect.outNode)))
+
+        newConnection2 = innovationHistory.checkConnection(connect.inNode, newNode, weight=1)
+        self.connections.append(newConnection2)
+        self.connectedNodes.append((self.nodes.index(connect.inNode), len(self.nodes)-1))
+
+        self.nextNode += 1
+        self.currNodesInLayer += 1
+        if self.currNodesInLayer == self.maxInLayer:
+            self.currLayer += 1
+            self.currNodesInLayer = 0
+
     def clear(self):
         self.steps = 0
         self.fitness = 0
@@ -119,7 +152,30 @@ class Genome:
         clone.connectedNodes = deepcopy(self.connectedNodes)
         clone.hiddenNodes = deepcopy(self.hiddenNodes)
         return clone
+    
+    def mutate(self, innovationHistory):
+        """
+        Mutates the genome in one of four ways
+        1) Weight mutation
+        2) Add random connection
+        3) Add new node
+        """
 
+        r = random.random()
+        if r < 0.8:
+            # 80 % of the time do weight mutation
+            for connection in self.connections:
+                connection.mutateWeights()
+
+        r2 = random.random()
+        if r2 < 0.05:
+            # 5 % of the time add a connection
+            self.add_connection(innovationHistory)
+
+        r3 = random.random()
+        if r3 < 0.02:
+            # 2 % of the time add a new node
+            self.addNode(innovationHistory)
 
     def __repr__(self):
         return "Genome: \n===> Nodes - {}, \n===> connections - {}".format(

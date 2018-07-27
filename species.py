@@ -4,6 +4,9 @@
 # Project: NEAT
 # ================================
 
+# Built-in Libraries
+from copy import deepcopy
+
 class Species:
     """
     Class for a species in the NEAT Algorithm
@@ -85,8 +88,15 @@ class Species:
 
         self.avgFitness = _sum/len(self.members)
 
-    def reproduce(self):
+    def reproduce(self, innovationHistory):
         # NotImplementedError("Remember to implement reproduction")
         """
         Creates a new child through crossover, and then mutates it in one of four ways
         """
+        # STEP 1: Crossover
+
+
+        # STEP 2: Mutation
+        child = deepcopy(self.members[0])
+
+        child.mutate(innovationHistory)

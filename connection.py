@@ -4,6 +4,8 @@
 # Project: NEAT
 # ================================
 
+# Built-in Libraries
+from random import random, uniform
 
 class Connection:
     """
@@ -27,6 +29,13 @@ class Connection:
 
     def getInnovationNo(self):
         return self.innovation
+
+    def mutateWeights(self):
+        r = random()
+        if r <= 0.5:
+            self.weight += uniform(-0.5, 0.5)
+        else:
+            self.weight = uniform(-2, 2)
 
     def __eq__(self, conn2):
         return ((self.inNode, self.outNode) == (conn2.inNode, conn2.outNode))
