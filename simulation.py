@@ -16,8 +16,8 @@ class Simulation:
     """
     def __init__(self, env, pop_size):
         self.env = gym.make(env)
-        self.input = self.env.action_space.n
-        self.output = self.env.observation_space.shape[0]
+        self.output = self.env.action_space.n
+        self.input = self.env.observation_space.shape[0]
         self.pop = Population(pop_size, self.input, self.output)
 
     def run(self, generations):
@@ -33,5 +33,5 @@ class Simulation:
                         print("Gene {}) no. steps {}".format(i, step+1))
                         gene.steps = step + 1
                         break
-            self.pop.naturalSelection()
-            print("Finished generation {}".format(g+1))
+            # self.pop.naturalSelection()
+            # print("Finished generation {}".format(g+1))

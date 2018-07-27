@@ -86,4 +86,7 @@ class Species:
         self.avgFitness = _sum/len(self.members)
 
     def reproduce(self):
-        NotImplementedError("Remember to implement reproduction")
+        # NotImplementedError("Remember to implement reproduction")
+        """
+        Creates a new child through crossover, and then mutates it in one of four ways
+        """

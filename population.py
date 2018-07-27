@@ -7,6 +7,7 @@
 # Custom libraries
 from genome import Genome
 from species import Species
+from innovation import Innovation
 
 class Population:
     """
@@ -17,10 +18,10 @@ class Population:
         self.pop_size = pop_size
         self.population = []
         self.species = []
-        self.innovationNo = 1
+        self.innovationHistory = Innovation()
 
         for _ in range(self.pop_size):
-            gene = Genome(_inSize, _outSize)
+            gene = Genome(_inSize, _outSize, self.innovationHistory)
             self.population.append(gene)
 
     def getGene(self, i):
@@ -41,10 +42,10 @@ class Population:
             newGenes.append(s.champ.clone())
             noOfChild = int(s.avgFitness / avgSum * self.size()) - 1
             for _ in range(noOfChild):
-                newGenes.append(s.reproduce(self.innovationNo))
+                newGenes.append(s.reproduce(self.innovationHistory))
 
         while len(newGenes) < self.pop_size:
-            newGenes.append(self.species[0].reproduce(self.innovationNo))
+            newGenes.append(self.species[0].reproduce(self.innovationHistory))
 
         self.population = []
         self.population = newGenes
