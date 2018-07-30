@@ -33,5 +33,5 @@ class Simulation:
                         print("Gene {}) no. steps {}".format(i, step+1))
                         gene.steps = step + 1
                         break
-            # self.pop.naturalSelection()
-            # print("Finished generation {}".format(g+1))
+            self.pop.naturalSelection()
+            print("Finished generation {}".format(g+1))

@@ -100,3 +100,5 @@ class Species:
         child = deepcopy(self.members[0])
 
         child.mutate(innovationHistory)
+
+        return child
