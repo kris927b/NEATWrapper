@@ -9,7 +9,7 @@ from copy import deepcopy
 import random
 
 # Custom Libraries
-from connection import Connection
+from NEATWrapper.connection import Connection
 
 class Innovation:
     """
