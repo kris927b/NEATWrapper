@@ -8,7 +8,7 @@
 import gym
 
 # Custom libraries
-from population import Population
+from NEATWrapper.population import Population
 
 class Simulation:
     """

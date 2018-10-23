@@ -4,19 +4,21 @@
 # Project: NEAT
 # ================================
 
-# * Custom Libraries 
-from NEATWrapper import Connection
-from NEATWrapper import Node
-
 # * Third-party libraries
 import pytest
+import sys
+
+sys.path.append('../')
+
+# * Custom Libraries 
+import NEATWrapper
 
 @pytest.fixture
 def connection():
-    _in = Node(1, 'input', layer=1)
-    _out = Node(2, 'out', layer=2)
+    _in = NEATWrapper.Node(1, 'input', layer=1)
+    _out = NEATWrapper.Node(2, 'out', layer=2)
     weight = 2
-    return Connection(_in, _out, weight)
+    return NEATWrapper.Connection(_in, _out, weight)
 
 
 def test_standard_init(connection):

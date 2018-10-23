@@ -5,7 +5,7 @@
 # ================================
 
 # Custom libraries
-from simulation import Simulation
+from NEATWrapper.simulation import Simulation
 
 
 def main():

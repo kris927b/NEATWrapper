@@ -5,9 +5,9 @@
 # ================================
 
 # Custom libraries
-from genome import Genome
-from species import Species
-from innovation import Innovation
+from NEATWrapper.genome import Genome
+from NEATWrapper.species import Species
+from NEATWrapper.innovation import Innovation
 
 class Population:
     """

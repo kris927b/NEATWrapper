@@ -1,9 +1,13 @@
-print(f'Invoking __init__.py for {__name__}')
-import NEATWrapper.cartpole
-from NEATWrapper.connection import Connection
-from NEATWrapper.genome import Genome
-from NEATWrapper.innovation import Innovation
+# ============================
+# NEATWrapper
+# Date: 23/10 - 18
+# ============================
+
+from NEATWrapper.cartpole import *
+from NEATWrapper.connection import *
+from NEATWrapper.genome import *
+from NEATWrapper.innovation import *
 from NEATWrapper.node import Node
-from NEATWrapper.population import Population
-import NEATWrapper.simulation
-from NEATWrapper.species import Species
+from NEATWrapper.population import *
+from NEATWrapper.simulation import *
+from NEATWrapper.species import *

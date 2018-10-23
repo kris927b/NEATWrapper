@@ -12,8 +12,8 @@ from copy import deepcopy
 import numpy as np
 
 # Custom libraries
-from node import Node
-from connection import Connection
+from NEATWrapper.node import Node
+from NEATWrapper.connection import Connection
 
 class Genome:
     """
