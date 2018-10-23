@@ -5,8 +5,8 @@
 # ================================
 
 # Custom libraries
-from population import Population
-from genome import Genome
+from NETWrapper import Population
+from NETWrapper import Genome
 
 # ThirdParty Libraries
 import pytest
