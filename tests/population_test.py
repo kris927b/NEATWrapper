@@ -1,12 +1,12 @@
 # ================================
 # Author: Kristian N Jensen
-# Date: 24/07 - 18
+# Date: 12/10 - 18
 # Project: NEAT
 # ================================
 
 # Custom libraries
-from NETWrapper import Population
-from NETWrapper import Genome
+from NEATWrapper import Population
+from NEATWrapper import Genome
 
 # ThirdParty Libraries
 import pytest
