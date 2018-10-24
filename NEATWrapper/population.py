@@ -39,7 +39,7 @@ class Population:
         newGenes = []
         avgSum = self.getAvgFitnessSum()
         for s in self.species:
-            newGenes.append(s.champ.clone())
+            newGenes.append(s.champ.clone(self.innovationHistory))
             noOfChild = int(s.avgFitness / avgSum * self.size()) - 1
             for _ in range(noOfChild):
                 newGenes.append(s.reproduce(self.innovationHistory))
@@ -70,12 +70,17 @@ class Population:
                     gotSpecies = True
                     break
             if not gotSpecies:
-                self.species.append(Species(gene))
+                self.species.append(Species(gene, self.innovationHistory))
     
     def sortSpecies(self):
-        for s in self.species:
-            s.sortSpecies()
+        # * Check how many members each species have
+        self.species = [s for s in self.species if len(s.members) > 0]
 
+        # * Sort each species individually
+        for s in self.species:
+            s.sortSpecies(self.innovationHistory)
+
+        # * Sort the entire list of species according to the champion in each species
         self.species.sort(key=lambda x: x.bestFitness, reverse=True)
 
     def cullSpecies(self):

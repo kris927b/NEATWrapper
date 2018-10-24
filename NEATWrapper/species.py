@@ -11,12 +11,12 @@ class Species:
     """
     Class for a species in the NEAT Algorithm
     """
-    def __init__(self, gene):
+    def __init__(self, gene, innovation):
         self.members = [gene]
         self.bestFitness = gene.fitness
-        self.represent = gene.clone()
+        self.represent = gene.clone(innovation)
         self.avgFitness = 0
-        self.champ = gene.clone()
+        self.champ = gene.clone(innovation)
 
         self.topoCoeff = 1
         self.weightCoeff = 0.5
@@ -35,14 +35,14 @@ class Species:
     def clear(self):
         self.members = []
 
-    def sortSpecies(self):
+    def sortSpecies(self, innovation):
         self.members.sort(key=lambda x: x.fitness, reverse=True)
         champ = self.members[0].fitness
 
         if champ > self.bestFitness:
             self.bestFitness = champ
-            self.represent = self.members[0].clone()
-            self.champ = self.members[0].clone()
+            self.represent = self.members[0].clone(innovation)
+            self.champ = self.members[0].clone(innovation)
 
     def getTopologicalDiff(self, gene):
         connect1 = self.represent.connections

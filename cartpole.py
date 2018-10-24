@@ -5,15 +5,15 @@
 # ================================
 
 # Custom libraries
-from NEATWrapper.simulation import Simulation
+from NEATWrapper import Simulation
 
 
 def main():
     env = 'CartPole-v0'
-    sim = Simulation(env, 2)
+    sim = Simulation(env, 20)
 
     print("================ Starting simulation ================")
-    sim.run(1)
+    sim.run(20)
     print("================= Ended  simulation =================")
 
 if __name__ == '__main__':

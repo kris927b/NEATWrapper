@@ -150,7 +150,6 @@ class Genome:
         clone = Genome(len(self.inNodes), len(self.outNodes), innovationHistory, clone=True)
         clone.connections = deepcopy(self.connections)
         clone.connectedNodes = deepcopy(self.connectedNodes)
-        clone.hiddenNodes = deepcopy(self.hiddenNodes)
         return clone
     
     def mutate(self, innovationHistory):

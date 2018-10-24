@@ -17,7 +17,7 @@ import NEATWrapper
 def pop():
     return NEATWrapper.Population(2, 2, 2)
 
-def test_population(pop):
+def test_population_init(pop):
     assert len(pop.population) == 2
 
 def test_pop_size(pop):
@@ -26,3 +26,14 @@ def test_pop_size(pop):
 def test_get_gene(pop):
     gene = pop.getGene(0)
     assert type(gene) is NEATWrapper.Genome
+
+def test_calc_fitness(pop):
+    for i in range(pop.size()):
+        gene = pop.getGene(i)
+        gene.steps = 10
+
+    pop.calcFitness()
+
+    for i in range(pop.size()):
+        gene = pop.getGene(i)
+        gene.fitness = 0.05
