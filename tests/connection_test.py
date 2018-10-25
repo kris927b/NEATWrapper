@@ -21,7 +21,7 @@ def connection():
     return NEATWrapper.Connection(_in, _out, weight)
 
 
-def test_standard_init(connection):
+def test_connectionInit(connection):
     assert connection.weight == 2
     assert connection.innovation == 0
 
