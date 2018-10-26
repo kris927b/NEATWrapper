@@ -18,15 +18,17 @@ from NEATWrapper.connection import Connection
 class Genome:
     """
     Class for a Genome in the NEAT Algorithm
+    @param _in: Number of input nodes \n
+    @param _out: Number of output nodes \n
+    @param innovationHistory: innovationHistory class for all the genes in the population. Described in the innovation.py file.
+    @param clone: bool whether or not the gene is a clone of a previous created gene.
     """
     def __init__(self, _in, _out, innovationHistory, clone=False):
         self.nodes = []
-        self.inNodes = []
-        self.outNodes = []
+        self.inNodes = _in
+        self.outNodes = _out
         self.connectedNodes = []
         self.connections = []
-        self.noOutputs = _out
-        self.noInputs = _in
         self.nextNode = 1
         self.maxInLayer = 10
         self.currLayer = 1
@@ -34,21 +36,18 @@ class Genome:
         self.steps = 0
         self.fitness = 0
 
-
-        for i in range(_in):
-            node = Node(i+1, 'input', layer=0)
-            self.nodes.append(node)
-            self.inNodes.append(node)
-            self.nextNode += 1
-
-        for i in range(_out):
-            node = Node(i+20, 'output', layer=20)
-            self.nodes.append(node)
-            self.outNodes.append(node)
-            self.nextNode += 1
-        
         if not clone:
-            self.add_connection(innovationHistory)
+            for i in range(_in):
+                node = Node(i+1, 'input', layer=0)
+                self.nodes.append(node)
+                self.nextNode += 1
+
+            for i in range(_out):
+                node = Node(i+20, 'output', layer=20)
+                self.nodes.append(node)
+                self.nextNode += 1
+        
+            self.addConnection(innovationHistory)
 
 
     def forward(self, _input):
@@ -58,7 +57,7 @@ class Genome:
         for node in self.nodes:
             node.clear()
 
-        output = [0] * self.noOutputs
+        output = [0] * self.outNodes
         j = 0
         for i, node in enumerate(self.nodes):
             if node.nodeType == 'input':
@@ -78,10 +77,10 @@ class Genome:
 
     def getAction(self, _input):
         output = self.forward(_input)
-        action = np.argmax(output)
+        action = int(np.argmax(output))
         return action
 
-    def add_connection(self, innovationHistory):
+    def addConnection(self, innovationHistory):
         """
         Add a connection to the genome
         """
@@ -107,8 +106,6 @@ class Genome:
         self.connections.append(connection)
 
     def nodesAreSimilar(self, node1, node2):
-        if node1.nodeType == node2.nodeType:
-            return True
         if node1.layer == node2.layer:
             return True
         if node1.nodeType == 'output':
@@ -147,15 +144,18 @@ class Genome:
         self.fitness = 0
 
     def clone(self, innovationHistory):
-        clone = Genome(len(self.inNodes), len(self.outNodes), innovationHistory, clone=True)
+        clone = Genome(self.inNodes, self.outNodes, innovationHistory, clone=True)
         clone.connections = deepcopy(self.connections)
         clone.connectedNodes = deepcopy(self.connectedNodes)
-        clone.hiddenNodes = deepcopy(self.hiddenNodes)
+        clone.nodes = deepcopy(self.nodes)
+        clone.nextNode = deepcopy(self.nextNode)
+        clone.currNodesInLayer = deepcopy(self.currNodesInLayer)
+        clone.currLayer = deepcopy(self.currLayer)
         return clone
     
     def mutate(self, innovationHistory):
         """
-        Mutates the genome in one of four ways
+        Mutates the genome in one of three ways
         1) Weight mutation
         2) Add random connection
         3) Add new node
@@ -170,7 +170,7 @@ class Genome:
         r2 = random.random()
         if r2 < 0.05:
             # 5 % of the time add a connection
-            self.add_connection(innovationHistory)
+            self.addConnection(innovationHistory)
 
         r3 = random.random()
         if r3 < 0.02:

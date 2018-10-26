@@ -3,7 +3,6 @@
 # Date: 23/10 - 18
 # ============================
 
-from NEATWrapper.cartpole import *
 from NEATWrapper.connection import *
 from NEATWrapper.genome import *
 from NEATWrapper.innovation import *
