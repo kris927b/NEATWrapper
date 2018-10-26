@@ -26,7 +26,7 @@ class Simulation:
                 obs = self.env.reset()
                 gene = self.pop.getGene(i)
                 for step in range(100):
-                    self.env.render()
+                    # self.env.render()
                     action = gene.getAction(obs)
                     obs, _, done, _ = self.env.step(action)
                     if done:

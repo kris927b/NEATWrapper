@@ -94,7 +94,7 @@ class Population:
         for s in self.species:
             _sum += s.avgFitness
 
-        return _sum
+        return _sum/len(self.species)
 
 
 if __name__ == '__main__':
