@@ -14,6 +14,7 @@ class Species:
     def __init__(self, gene, innovation):
         self.members = [gene]
         self.bestFitness = gene.fitness
+        self.bestSteps = gene.steps
         self.represent = gene.clone(innovation)
         self.avgFitness = 0
         self.champ = gene.clone(innovation)
@@ -41,6 +42,7 @@ class Species:
 
         if champ > self.bestFitness:
             self.bestFitness = champ
+            self.bestSteps = self.members[0].steps
             self.represent = self.members[0].clone(innovation)
             self.champ = self.members[0].clone(innovation)
 
