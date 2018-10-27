@@ -9,8 +9,8 @@ from NEATWrapper import Simulation
 
 
 def main():
-    env = 'CartPole-v0'
-    sim = Simulation(env, 100)
+    env = 'CartPole-v1'
+    sim = Simulation(env, 10)
 
     print("================ Starting simulation ================")
     sim.run(100)
