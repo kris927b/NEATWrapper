@@ -10,4 +10,4 @@ This is a project that is still in progress. It is not fully working yet. In the
 - [ ] Creating tests for all classes
 - [ ] Optimizing code base
 - [ ] Implementing crossover for two of the agents
-  - [ ] Implmenting method for selecting two parent genes for crossover
+  - [X] Implmenting method for selecting two parent genes for crossover
