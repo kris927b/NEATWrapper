@@ -22,13 +22,13 @@ class Simulation:
         self._maxSteps = self.env._max_episode_steps
         self.pop = Population(pop_size, self.env.observation_space.shape[0], self.env.action_space.n)
         self.verbosity = verbosity
-        self.currGen = 0
+        self.currGen = 1
 
     def run(self, generations, render=False):
         """
         Function for running X number of generations of the simulation. 
         """
-        for g in range(generations):
+        for _ in range(generations):
             for i in range(self.pop.size()):
                 obs = self.env.reset()
                 gene = self.pop.getGene(i)
@@ -42,5 +42,6 @@ class Simulation:
                         gene.steps = step + 1
                         break
             self.pop.naturalSelection()
-            print(f'Generation Best: Steps: {self.pop.species[0].bestSteps}, Fitness: {self.pop.species[0].bestFitness}')
-            print("Finished generation {}".format(g+1))
+            print(f'Generation Best: Steps: {self.pop.getBestScore()}')
+            print(f'Finished generation {self.currGen}')
+            self.currGen += 1

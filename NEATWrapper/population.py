@@ -4,6 +4,9 @@
 # Project: NEAT
 # ================================
 
+# Built-in libraries
+from math import inf
+
 # Custom libraries
 from NEATWrapper.genome import Genome
 from NEATWrapper.species import Species
@@ -19,41 +22,60 @@ class Population:
         self.population = []
         self.species = []
         self.innovationHistory = Innovation()
+        self.bestScore = -inf
+        self.bestGene = None
 
         for _ in range(self.pop_size):
             gene = Genome(_inSize, _outSize, self.innovationHistory)
+            gene.generateNet()
             self.population.append(gene)
 
     def getGene(self, i):
         return self.population[i]
 
     def size(self):
-        return len(self.population)
+        return self.pop_size
 
     def naturalSelection(self):
         self.calcFitness()
         self.speciate()
         self.sortSpecies()
         self.cullSpecies()
-
-        newGenes = []
-        avgSum = self.getAvgFitnessSum()
-        for s in self.species:
-            newGenes.append(s.champ.clone(self.innovationHistory))
-            noOfChild = int(s.avgFitness / avgSum * self.size()) - 1
-            for _ in range(noOfChild):
-                newGenes.append(s.reproduce(self.innovationHistory))
-
-        while len(newGenes) < self.pop_size:
-            newGenes.append(self.species[0].reproduce(self.innovationHistory))
+        self.findBestGene()
+        self.killStaleSpecies()
 
         self.population = []
-        self.population = newGenes
+        avgSum = self.getAvgFitnessSum()
+        for s in self.species:
+            self.population.append(s.champ.clone(self.innovationHistory))
+            noOfChild = int(s.avgFitness / avgSum * self.size()) - 1
+            for _ in range(noOfChild):
+                self.population.append(s.reproduce(self.innovationHistory))
+
+        while len(self.population) < self.size():
+            self.population.append(self.species[0].reproduce(self.innovationHistory))
+
+        for gene in self.population:
+            gene.generateNet()
+
+    def findBestGene(self):
+        gensBestGene = self.species[0].members[0]
+        gensBestScore = gensBestGene.steps
+
+        if gensBestScore > self.bestScore:
+            self.bestScore = gensBestScore
+            self.bestGene = gensBestGene.clone(self.innovationHistory)
+
+    def getBestGene(self):
+        return self.bestGene
+
+    def getBestScore(self):
+        return self.bestScore
 
     def calcFitness(self):
         sums = 0
         for gene in self.population:
-            sums += pow(gene.steps, 2)
+            sums += gene.steps**2
         
         for gene in self.population:
             gene.fitness = gene.steps / sums
@@ -71,11 +93,11 @@ class Population:
                     break
             if not gotSpecies:
                 self.species.append(Species(gene, self.innovationHistory))
+
+    def killStaleSpecies(self):
+        self.species[:] = [s for s in self.species if s.staleness < 15]
     
     def sortSpecies(self):
-        # * Check how many members each species have
-        self.species = [s for s in self.species if len(s.members) > 0]
-
         # * Sort each species individually
         for s in self.species:
             s.sortSpecies(self.innovationHistory)
@@ -85,9 +107,10 @@ class Population:
 
     def cullSpecies(self):
         for s in self.species:
-            s.cull()
-            s.shareFitness()
-            s.getAvgFitness()
+            if s.size() > 0:
+                s.cull()
+                s.shareFitness()
+                s.getAvgFitness()
 
     def getAvgFitnessSum(self):
         _sum = 0

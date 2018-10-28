@@ -6,6 +6,7 @@
 
 # Built-in Libraries
 from copy import deepcopy
+from random import uniform
 
 class Species:
     """
@@ -16,6 +17,7 @@ class Species:
         self.bestFitness = gene.fitness
         self.bestSteps = gene.steps
         self.represent = gene.clone(innovation)
+        self.staleness = 0
         self.avgFitness = 0
         self.champ = gene.clone(innovation)
 
@@ -36,8 +38,16 @@ class Species:
     def clear(self):
         self.members = []
 
+    def size(self):
+        return len(self.members)
+
     def sortSpecies(self, innovation):
         self.members.sort(key=lambda x: x.fitness, reverse=True)
+        
+        if len(self.members) == 0:
+            self.staleness = 100
+            return
+
         champ = self.members[0].fitness
 
         if champ > self.bestFitness:
@@ -45,6 +55,8 @@ class Species:
             self.bestSteps = self.members[0].steps
             self.represent = self.members[0].clone(innovation)
             self.champ = self.members[0].clone(innovation)
+        else:
+            self.staleness += 1
 
     def getTopologicalDiff(self, gene):
         connect1 = self.represent.connections
@@ -76,19 +88,43 @@ class Species:
         return totalDiff/match
 
     def cull(self):
-        if len(self.members) > 2:
-            self.members = self.members[:int(len(self.members)/2)]
+        if self.size() > 2:
+            self.members = self.members[:int(self.size()/2)]
 
     def shareFitness(self):
         for gene in self.members:
-            gene.fitness /= len(self.members)
+            gene.fitness /= self.size()
 
     def getAvgFitness(self):
         _sum = 0
         for gene in self.members:
             _sum += gene.fitness
 
-        self.avgFitness = _sum/len(self.members)
+        self.avgFitness = _sum/self.size()
+
+    def selectGene(self):
+        # * If only one member, then return that one
+        if self.size() == 1:
+            return self.members[0]
+
+        # * Find the total fitness between all genes in the species
+        totalFitness = 0
+        for member in self.members:
+            totalFitness += member.fitness
+
+        # * Sample a random number between 0 and the total fitness
+        r = uniform(0, totalFitness)
+
+        # * Sum all the fitness values up once again, but this time return the gene that flips the sum over the random number sampled above.
+        _sum = 0
+        for member in self.members:
+            _sum += member.fitness
+            if _sum >= r:
+                return member
+
+        # * For security we return the best gene in the species if the above algorithm yielded no result.
+        return self.members[0]
+
 
     def reproduce(self, innovationHistory):
         # NotImplementedError("Remember to implement reproduction")
@@ -99,7 +135,7 @@ class Species:
 
 
         # STEP 2: Mutation
-        child = deepcopy(self.members[0])
+        child = self.selectGene().clone(innovationHistory)
 
         child.mutate(innovationHistory)
 

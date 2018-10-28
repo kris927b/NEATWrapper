@@ -45,6 +45,17 @@ def test_speciate(pop):
     pop.speciate()
     assert len(pop.species) > 0
 
+def test_killStaleSpecies(pop):
+    pop.speciate()
+    pop.killStaleSpecies()
+    assert len(pop.species) > 0
+
+    for s in pop.species:
+        s.staleness = 15
+
+    pop.killStaleSpecies()
+    assert len(pop.species) == 0
+
 def test_sortSpecies(pop):
     pop.speciate()
     assert pop.species[0].bestFitness >= pop.species[-1].bestFitness

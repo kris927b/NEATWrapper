@@ -29,6 +29,7 @@ class Genome:
         self.outNodes = _out
         self.connectedNodes = []
         self.connections = []
+        self.network = []
         self.nextNode = 1
         self.maxInLayer = 10
         self.currLayer = 1
@@ -55,25 +56,36 @@ class Genome:
         Move an input forward through the genome (Neural Net)
         """
         for node in self.nodes:
-            node.clear()
+            node.reset()
 
         output = [0] * self.outNodes
         j = 0
-        for i, node in enumerate(self.nodes):
-            if node.nodeType == 'input':
-                node.value = _input[j]
-                j += 1
-            connections = node.connections
-            for connection in connections:
-                connection.forward()
+        for i in range(self.inNodes):
+            self.nodes[i].setValue(_input[i])
 
-        j = 0
-        for i, node in enumerate(self.nodes):
-            if node.nodeType == 'output':
-                output[j] = node.value
-                j += 1
+        for i in range(len(self.network)):
+            self.network[i].forward()
+
+        for i in range(self.outNodes):
+            output[i] = self.nodes[self.inNodes + i].value
 
         return output
+
+    def connectNodes(self):
+        for node in self.nodes:
+            node.clear()
+
+        for connection in self.connections:
+            connection.inNode.addConnection(connection)
+
+    def generateNet(self):
+        self.connectNodes()
+        self.network = []
+
+        for i in range(self.currLayer):
+            for j in range(len(self.nodes)):
+                if self.nodes[j].getLayer() == i:
+                    self.network.append(self.nodes[j])
 
     def getAction(self, _input):
         output = self.forward(_input)
@@ -106,9 +118,13 @@ class Genome:
         self.connections.append(connection)
 
     def nodesAreSimilar(self, node1, node2):
-        if node1.layer == node2.layer:
+        if node1.nodeId == node2.nodeId:
             return True
         if node1.nodeType == 'output':
+            return True
+        if node2.nodeType == 'input':
+            return True
+        if node1.layer == node2.layer:
             return True
 
         return False

@@ -6,6 +6,7 @@
 
 # Built-in Libraries
 from random import random, uniform
+from math import e
 
 class Connection:
     """
@@ -19,10 +20,20 @@ class Connection:
         self.innovation = innovation
 
     def forward(self):
+        if not self.enabled:
+            return
         _input = self.inNode.value
         output = _input * self.weight
-        output = max(output, 0)
+        output = self.relu(output)
         self.outNode.value += output
+
+    def sigmoid(self, x):
+        y = 1 / (1 + e**(-x))
+        return y
+
+    def relu(self, x):
+        y = max(x, 0)
+        return y
 
     def setInnovationNo(self, number):
         self.innovation = number
