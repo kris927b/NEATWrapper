@@ -4,6 +4,9 @@
 # Project: NEAT
 # ================================
 
+# Built-in libraries
+from math import inf
+
 # Custom libraries
 from NEATWrapper.genome import Genome
 from NEATWrapper.species import Species
@@ -19,9 +22,12 @@ class Population:
         self.population = []
         self.species = []
         self.innovationHistory = Innovation()
+        self.bestScore = -inf
+        self.bestGene = None
 
         for _ in range(self.pop_size):
             gene = Genome(_inSize, _outSize, self.innovationHistory)
+            gene.generateNet()
             self.population.append(gene)
 
     def getGene(self, i):
@@ -35,6 +41,7 @@ class Population:
         self.speciate()
         self.sortSpecies()
         self.cullSpecies()
+        self.findBestGene()
         self.killStaleSpecies()
 
         self.population = []
@@ -47,6 +54,23 @@ class Population:
 
         while len(self.population) < self.size():
             self.population.append(self.species[0].reproduce(self.innovationHistory))
+
+        for gene in self.population:
+            gene.generateNet()
+
+    def findBestGene(self):
+        gensBestGene = self.species[0].members[0]
+        gensBestScore = gensBestGene.steps
+
+        if gensBestScore > self.bestScore:
+            self.bestScore = gensBestScore
+            self.bestGene = gensBestGene.clone(self.innovationHistory)
+
+    def getBestGene(self):
+        return self.bestGene
+
+    def getBestScore(self):
+        return self.bestScore
 
     def calcFitness(self):
         sums = 0

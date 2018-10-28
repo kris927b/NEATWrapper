@@ -28,7 +28,7 @@ class Simulation:
         """
         Function for running X number of generations of the simulation. 
         """
-        for g in range(generations):
+        for _ in range(generations):
             for i in range(self.pop.size()):
                 obs = self.env.reset()
                 gene = self.pop.getGene(i)
@@ -42,6 +42,6 @@ class Simulation:
                         gene.steps = step + 1
                         break
             self.pop.naturalSelection()
-            print(f'Generation Best: Steps: {self.pop.species[0].bestSteps}, Fitness: {self.pop.species[0].bestFitness}')
-            print("Finished generation {}".format(self.currGen))
+            print(f'Generation Best: Steps: {self.pop.getBestScore()}')
+            print(f'Finished generation {self.currGen}')
             self.currGen += 1

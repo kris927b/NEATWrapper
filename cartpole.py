@@ -13,7 +13,7 @@ def main():
     sim = Simulation(env, 100)
 
     print("================ Starting simulation ================")
-    sim.run(50)
+    sim.run(10)
     print("================= Ended  simulation =================")
 
 if __name__ == '__main__':

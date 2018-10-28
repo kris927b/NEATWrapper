@@ -44,9 +44,12 @@ def test_addConnection(gene, innovation):
 def test_nodesAreSimilar(gene):
     node1 = gene.nodes[0]
     node2 = gene.nodes[1]
+    # * Testing for nodes in same layer and node 2 being an input node
     assert gene.nodesAreSimilar(node1, node2)
+    # * Testing a good pair of nodes
     node2 = gene.nodes[2]
     assert not gene.nodesAreSimilar(node1, node2)
+    # * Testing for node 1 being output node
     node1 = gene.nodes[3]
     assert gene.nodesAreSimilar(node1, node2)
 
