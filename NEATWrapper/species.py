@@ -6,6 +6,7 @@
 
 # Built-in Libraries
 from copy import deepcopy
+from random import uniform
 
 class Species:
     """
@@ -87,19 +88,43 @@ class Species:
         return totalDiff/match
 
     def cull(self):
-        if len(self.members) > 2:
-            self.members = self.members[:int(len(self.members)/2)]
+        if self.size() > 2:
+            self.members = self.members[:int(self.size()/2)]
 
     def shareFitness(self):
         for gene in self.members:
-            gene.fitness /= len(self.members)
+            gene.fitness /= self.size()
 
     def getAvgFitness(self):
         _sum = 0
         for gene in self.members:
             _sum += gene.fitness
 
-        self.avgFitness = _sum/len(self.members)
+        self.avgFitness = _sum/self.size()
+
+    def selectGene(self):
+        # * If only one member, then return that one
+        if self.size() == 1:
+            return self.members[0]
+
+        # * Find the total fitness between all genes in the species
+        totalFitness = 0
+        for member in self.members:
+            totalFitness += member.fitness
+
+        # * Sample a random number between 0 and the total fitness
+        r = uniform(0, totalFitness)
+
+        # * Sum all the fitness values up once again, but this time return the gene that flips the sum over the random number sampled above.
+        _sum = 0
+        for member in self.members:
+            _sum += member.fitness
+            if _sum >= r:
+                return member
+
+        # * For security we return the best gene in the species if the above algorithm yielded no result.
+        return self.members[0]
+
 
     def reproduce(self, innovationHistory):
         # NotImplementedError("Remember to implement reproduction")
@@ -110,7 +135,7 @@ class Species:
 
 
         # STEP 2: Mutation
-        child = self.members[0].clone(innovationHistory)
+        child = self.selectGene().clone(innovationHistory)
 
         child.mutate(innovationHistory)
 
