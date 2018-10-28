@@ -28,32 +28,30 @@ class Population:
         return self.population[i]
 
     def size(self):
-        return len(self.population)
+        return self.pop_size
 
     def naturalSelection(self):
         self.calcFitness()
         self.speciate()
         self.sortSpecies()
         self.cullSpecies()
-
-        newGenes = []
-        avgSum = self.getAvgFitnessSum()
-        for s in self.species:
-            newGenes.append(s.champ.clone(self.innovationHistory))
-            noOfChild = int(s.avgFitness / avgSum * self.size()) - 1
-            for _ in range(noOfChild):
-                newGenes.append(s.reproduce(self.innovationHistory))
-
-        while len(newGenes) < self.pop_size:
-            newGenes.append(self.species[0].reproduce(self.innovationHistory))
+        self.killStaleSpecies()
 
         self.population = []
-        self.population = newGenes
+        avgSum = self.getAvgFitnessSum()
+        for s in self.species:
+            self.population.append(s.champ.clone(self.innovationHistory))
+            noOfChild = int(s.avgFitness / avgSum * self.size()) - 1
+            for _ in range(noOfChild):
+                self.population.append(s.reproduce(self.innovationHistory))
+
+        while len(self.population) < self.size():
+            self.population.append(self.species[0].reproduce(self.innovationHistory))
 
     def calcFitness(self):
         sums = 0
         for gene in self.population:
-            sums += pow(gene.steps, 2)
+            sums += gene.steps**2
         
         for gene in self.population:
             gene.fitness = gene.steps / sums
@@ -71,11 +69,11 @@ class Population:
                     break
             if not gotSpecies:
                 self.species.append(Species(gene, self.innovationHistory))
+
+    def killStaleSpecies(self):
+        self.species[:] = [s for s in self.species if s.staleness < 15]
     
     def sortSpecies(self):
-        # * Check how many members each species have
-        self.species = [s for s in self.species if len(s.members) > 0]
-
         # * Sort each species individually
         for s in self.species:
             s.sortSpecies(self.innovationHistory)
@@ -85,9 +83,10 @@ class Population:
 
     def cullSpecies(self):
         for s in self.species:
-            s.cull()
-            s.shareFitness()
-            s.getAvgFitness()
+            if s.size() > 0:
+                s.cull()
+                s.shareFitness()
+                s.getAvgFitness()
 
     def getAvgFitnessSum(self):
         _sum = 0

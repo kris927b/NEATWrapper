@@ -10,10 +10,10 @@ from NEATWrapper import Simulation
 
 def main():
     env = 'CartPole-v1'
-    sim = Simulation(env, 10)
+    sim = Simulation(env, 100)
 
     print("================ Starting simulation ================")
-    sim.run(100)
+    sim.run(50)
     print("================= Ended  simulation =================")
 
 if __name__ == '__main__':

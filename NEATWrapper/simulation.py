@@ -22,7 +22,7 @@ class Simulation:
         self._maxSteps = self.env._max_episode_steps
         self.pop = Population(pop_size, self.env.observation_space.shape[0], self.env.action_space.n)
         self.verbosity = verbosity
-        self.currGen = 0
+        self.currGen = 1
 
     def run(self, generations, render=False):
         """
@@ -43,4 +43,5 @@ class Simulation:
                         break
             self.pop.naturalSelection()
             print(f'Generation Best: Steps: {self.pop.species[0].bestSteps}, Fitness: {self.pop.species[0].bestFitness}')
-            print("Finished generation {}".format(g+1))
+            print("Finished generation {}".format(self.currGen))
+            self.currGen += 1

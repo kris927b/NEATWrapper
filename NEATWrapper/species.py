@@ -16,6 +16,7 @@ class Species:
         self.bestFitness = gene.fitness
         self.bestSteps = gene.steps
         self.represent = gene.clone(innovation)
+        self.staleness = 0
         self.avgFitness = 0
         self.champ = gene.clone(innovation)
 
@@ -36,8 +37,16 @@ class Species:
     def clear(self):
         self.members = []
 
+    def size(self):
+        return len(self.members)
+
     def sortSpecies(self, innovation):
         self.members.sort(key=lambda x: x.fitness, reverse=True)
+        
+        if len(self.members) == 0:
+            self.staleness = 100
+            return
+
         champ = self.members[0].fitness
 
         if champ > self.bestFitness:
@@ -45,6 +54,8 @@ class Species:
             self.bestSteps = self.members[0].steps
             self.represent = self.members[0].clone(innovation)
             self.champ = self.members[0].clone(innovation)
+        else:
+            self.staleness += 1
 
     def getTopologicalDiff(self, gene):
         connect1 = self.represent.connections
@@ -99,7 +110,7 @@ class Species:
 
 
         # STEP 2: Mutation
-        child = deepcopy(self.members[0])
+        child = self.members[0].clone(innovationHistory)
 
         child.mutate(innovationHistory)
 
