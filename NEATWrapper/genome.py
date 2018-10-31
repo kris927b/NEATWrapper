@@ -92,6 +92,25 @@ class Genome:
         action = int(np.argmax(output))
         return action
 
+    def fullyConnected(self):
+        maxConnections = 0
+        nodesPerLayer = [0] * self.currLayer
+
+        for node in self.nodes:
+            nodesPerLayer[node.layer] += 1
+
+        for i in range(self.currLayer - 1):
+            nodesUpFront = 0
+            for j in range(i+1, self.currLayer):
+                nodesUpFront += nodesPerLayer[j]
+
+            maxConnections += nodesPerLayer[i] * nodesUpFront
+
+        if maxConnections == len(self.nodes):
+            return True
+
+        return False
+
     def addConnection(self, innovationHistory):
         """
         Add a connection to the genome
