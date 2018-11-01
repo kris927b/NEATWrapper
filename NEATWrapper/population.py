@@ -47,7 +47,7 @@ class Population:
         self.population = []
         avgSum = self.getAvgFitnessSum()
         for s in self.species:
-            self.population.append(s.champ.clone(self.innovationHistory))
+            self.population.append(s.champ.clone())
             noOfChild = int(s.avgFitness / avgSum * self.size()) - 1
             for _ in range(noOfChild):
                 self.population.append(s.reproduce(self.innovationHistory))
@@ -64,7 +64,7 @@ class Population:
 
         if gensBestScore > self.bestScore:
             self.bestScore = gensBestScore
-            self.bestGene = gensBestGene.clone(self.innovationHistory)
+            self.bestGene = gensBestGene.clone()
 
     def getBestGene(self):
         return self.bestGene
@@ -92,7 +92,7 @@ class Population:
                     gotSpecies = True
                     break
             if not gotSpecies:
-                self.species.append(Species(gene, self.innovationHistory))
+                self.species.append(Species(gene))
 
     def killStaleSpecies(self):
         self.species[:] = [s for s in self.species if s.staleness < 15]
@@ -100,7 +100,7 @@ class Population:
     def sortSpecies(self):
         # * Sort each species individually
         for s in self.species:
-            s.sortSpecies(self.innovationHistory)
+            s.sortSpecies()
 
         # * Sort the entire list of species according to the champion in each species
         self.species.sort(key=lambda x: x.bestFitness, reverse=True)

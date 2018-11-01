@@ -73,7 +73,7 @@ def test_clear(gene):
 
 def test_clone(gene, innovation):
     gene.addNode(innovation)
-    gene_clone = gene.clone(innovation)
+    gene_clone = gene.clone()
     assert gene_clone is not gene
     assert len(gene_clone.connections) == len(gene.connections)
     assert len(gene_clone.nodes) == len(gene.nodes)
