@@ -59,8 +59,7 @@ def test_addNode(gene, innovation):
     assert len(gene.connections) == 3
     assert len(gene.connectedNodes) == 3
     assert gene.nextNode == 6
-    assert gene.currNodesInLayer == 1
-    assert gene.currLayer == 1
+    assert gene.currLayer == 3
 
 def test_clear(gene):
     gene.steps = 10
@@ -79,5 +78,4 @@ def test_clone(gene, innovation):
     assert len(gene_clone.nodes) == len(gene.nodes)
     assert len(gene_clone.connectedNodes) == len(gene.connectedNodes)
     assert gene_clone.nextNode == gene.nextNode
-    assert gene_clone.currNodesInLayer == gene.currNodesInLayer
     assert gene_clone.currLayer == gene.currLayer

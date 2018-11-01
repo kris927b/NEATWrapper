@@ -33,7 +33,6 @@ class Genome:
         self.nextNode = 1
         self.maxInLayer = 10
         self.currLayer = 2
-        self.currNodesInLayer = 0
         self.steps = 0
         self.fitness = 0
 
@@ -105,7 +104,7 @@ class Genome:
 
             maxConnections += nodesPerLayer[i] * nodesUpFront
 
-        if maxConnections == len(self.nodes):
+        if maxConnections == len(self.connections):
             return True
 
         return False
@@ -212,7 +211,6 @@ class Genome:
         clone.connectedNodes = deepcopy(self.connectedNodes)
         clone.nodes = deepcopy(self.nodes)
         clone.nextNode = deepcopy(self.nextNode)
-        clone.currNodesInLayer = deepcopy(self.currNodesInLayer)
         clone.currLayer = deepcopy(self.currLayer)
         return clone
     
