@@ -12,14 +12,14 @@ class Species:
     """
     Class for a species in the NEAT Algorithm
     """
-    def __init__(self, gene, innovation):
+    def __init__(self, gene):
         self.members = [gene]
         self.bestFitness = gene.fitness
         self.bestSteps = gene.steps
-        self.represent = gene.clone(innovation)
+        self.represent = gene.clone()
         self.staleness = 0
         self.avgFitness = 0
-        self.champ = gene.clone(innovation)
+        self.champ = gene.clone()
 
         self.topoCoeff = 1
         self.weightCoeff = 0.5
@@ -41,7 +41,7 @@ class Species:
     def size(self):
         return len(self.members)
 
-    def sortSpecies(self, innovation):
+    def sortSpecies(self):
         self.members.sort(key=lambda x: x.fitness, reverse=True)
         
         if len(self.members) == 0:
@@ -53,8 +53,8 @@ class Species:
         if champ > self.bestFitness:
             self.bestFitness = champ
             self.bestSteps = self.members[0].steps
-            self.represent = self.members[0].clone(innovation)
-            self.champ = self.members[0].clone(innovation)
+            self.represent = self.members[0].clone()
+            self.champ = self.members[0].clone()
         else:
             self.staleness += 1
 
@@ -126,7 +126,7 @@ class Species:
         return self.members[0]
 
 
-    def reproduce(self, innovationHistory):
+    def reproduce(self, innovation):
         # NotImplementedError("Remember to implement reproduction")
         """
         Creates a new child through crossover, and then mutates it in one of four ways
@@ -135,8 +135,8 @@ class Species:
 
 
         # STEP 2: Mutation
-        child = self.selectGene().clone(innovationHistory)
+        child = self.selectGene().clone()
 
-        child.mutate(innovationHistory)
+        child.mutate(innovation)
 
         return child

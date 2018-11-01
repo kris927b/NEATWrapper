@@ -32,19 +32,18 @@ class Genome:
         self.network = []
         self.nextNode = 1
         self.maxInLayer = 10
-        self.currLayer = 1
-        self.currNodesInLayer = 0
+        self.currLayer = 2
         self.steps = 0
         self.fitness = 0
 
         if not clone:
-            for i in range(_in):
-                node = Node(i+1, 'input', layer=0)
+            for _ in range(_in):
+                node = Node(self.nextNode, 'input', layer=0)
                 self.nodes.append(node)
                 self.nextNode += 1
 
-            for i in range(_out):
-                node = Node(i+20, 'output', layer=20)
+            for _ in range(_out):
+                node = Node(self.nextNode, 'output', layer=1)
                 self.nodes.append(node)
                 self.nextNode += 1
         
@@ -59,7 +58,6 @@ class Genome:
             node.reset()
 
         output = [0] * self.outNodes
-        j = 0
         for i in range(self.inNodes):
             self.nodes[i].setValue(_input[i])
 
@@ -92,30 +90,54 @@ class Genome:
         action = int(np.argmax(output))
         return action
 
+    def fullyConnected(self):
+        maxConnections = 0
+        nodesPerLayer = [0] * self.currLayer
+
+        for node in self.nodes:
+            nodesPerLayer[node.layer] += 1
+
+        for i in range(self.currLayer - 1):
+            nodesUpFront = 0
+            for j in range(i+1, self.currLayer):
+                nodesUpFront += nodesPerLayer[j]
+
+            maxConnections += nodesPerLayer[i] * nodesUpFront
+
+        if maxConnections == len(self.connections):
+            return True
+
+        return False
+
     def addConnection(self, innovationHistory):
         """
         Add a connection to the genome
         """
+
+        if self.fullyConnected():
+            return
+
         inNode = random.randint(0, len(self.nodes)-1)
         outNode = random.randint(0, len(self.nodes)-1)
-        connect = (inNode, outNode)
         
         node1 = self.nodes[inNode]
         node2 = self.nodes[outNode]
+        connect = (node1.nodeId, node2.nodeId)
 
         while self.nodesAreSimilar(node1, node2) or connect in self.connectedNodes:
             inNode = random.randint(0, len(self.nodes)-1)
             outNode = random.randint(0, len(self.nodes)-1)
-            connect = (inNode, outNode)
             node1 = self.nodes[inNode]
             node2 = self.nodes[outNode]
+            connect = (node1.nodeId, node2.nodeId)
 
         connection = innovationHistory.checkConnection(node1, node2)
 
-        self.nodes[inNode].connection = connection
         self.nodes[inNode].isConnected = True
         self.connectedNodes.append(connect)
         self.connections.append(connection)
+
+        self.connectNodes()
 
     def nodesAreSimilar(self, node1, node2):
         if node1.nodeId == node2.nodeId:
@@ -138,34 +160,57 @@ class Genome:
         connect.enabled = False
 
         newNodeNo = self.nextNode
-        newNode = Node(newNodeNo, 'hidden', layer = self.currLayer)
+        newNode = Node(newNodeNo, 'hidden', layer = connect.inNode.layer + 1)
         self.nodes.append(newNode)
 
-        newConnection1 = innovationHistory.checkConnection(newNode, connect.outNode, weight=connect.weight)
+        newConnection1 = innovationHistory.checkConnection(
+            newNode, 
+            connect.outNode, 
+            weight=connect.weight
+        )
         self.connections.append(newConnection1)
-        self.connectedNodes.append((len(self.nodes)-1, self.nodes.index(connect.outNode)))
+        self.connectedNodes.append((
+            newNodeNo, 
+            connect.outNode.nodeId
+        ))
 
-        newConnection2 = innovationHistory.checkConnection(connect.inNode, newNode, weight=1)
+        newConnection2 = innovationHistory.checkConnection(
+            connect.inNode, 
+            newNode, 
+            weight=1
+        )
         self.connections.append(newConnection2)
-        self.connectedNodes.append((self.nodes.index(connect.inNode), len(self.nodes)-1))
+        self.connectedNodes.append((
+            connect.inNode.nodeId, 
+            newNodeNo
+        ))
 
         self.nextNode += 1
-        self.currNodesInLayer += 1
-        if self.currNodesInLayer == self.maxInLayer:
+        if newNode.layer == connect.outNode.layer:
+            for node in self.nodes:
+                if node.layer >= newNode.layer:
+                    node.layer += 1
             self.currLayer += 1
-            self.currNodesInLayer = 0
+
+        self.connectNodes()
+
+    def getNode(self, nodeId):
+        for node in self.nodes:
+            if node.nodeId == nodeId:
+                return node
+        return None
+
 
     def clear(self):
         self.steps = 0
         self.fitness = 0
 
-    def clone(self, innovationHistory):
-        clone = Genome(self.inNodes, self.outNodes, innovationHistory, clone=True)
+    def clone(self):
+        clone = Genome(self.inNodes, self.outNodes, None, clone=True)
         clone.connections = deepcopy(self.connections)
         clone.connectedNodes = deepcopy(self.connectedNodes)
         clone.nodes = deepcopy(self.nodes)
         clone.nextNode = deepcopy(self.nextNode)
-        clone.currNodesInLayer = deepcopy(self.currNodesInLayer)
         clone.currLayer = deepcopy(self.currLayer)
         return clone
     

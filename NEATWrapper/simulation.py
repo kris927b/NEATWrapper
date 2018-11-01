@@ -29,6 +29,7 @@ class Simulation:
         Function for running X number of generations of the simulation. 
         """
         for _ in range(generations):
+            steps = []
             for i in range(self.pop.size()):
                 obs = self.env.reset()
                 gene = self.pop.getGene(i)
@@ -40,8 +41,23 @@ class Simulation:
                         if self.verbosity == 2:
                             print(f'Gene {i}) no. steps {step+1}')
                         gene.steps = step + 1
+                        steps.append(gene.steps)
                         break
             self.pop.naturalSelection()
-            print(f'Generation Best: Steps: {self.pop.getBestScore()}')
+            print(f'Generation Best: Steps: {max(steps)}')
             print(f'Finished generation {self.currGen}')
             self.currGen += 1
+
+    def runBest(self):
+        obs = self.env.reset()
+        gene = self.pop.getBestGene()
+        for step in range(500):
+            self.env.render()
+            action = gene.getAction(obs)
+            obs, reward, done, _ = self.env.step(action)
+            sys.stdout.write('\r' + str(reward + step))
+            sys.stdout.flush()
+            if done:
+                break
+        print("\nThe best gene got {} in reward!!".format(reward + step))
+        # self.pop.showBest()
