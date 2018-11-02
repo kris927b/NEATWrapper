@@ -9,5 +9,6 @@ This is a project that is still in progress. It is not fully working yet. In the
 - [X] Create verbosity setting for simulation class
 - [ ] Creating tests for all classes
 - [ ] Optimizing code base
-- [ ] Implementing crossover for two of the agents
+- [X] Implementing crossover for two of the agents
   - [X] Implmenting method for selecting two parent genes for crossover
+  - [X] Implement a method for searching similar connections in other parent.

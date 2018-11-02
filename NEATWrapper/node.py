@@ -4,6 +4,7 @@
 # Project: NEAT
 # ================================
 
+from copy import deepcopy
 
 class Node:
     """
@@ -36,8 +37,19 @@ class Node:
     def setValue(self, val):
         self.value = val
 
+    def clone(self):
+        new = Node(
+            deepcopy(self.nodeId), 
+            deepcopy(self.nodeType), 
+            deepcopy(self.layer)
+        )
+
+        new.isConnected = deepcopy(self.isConnected)
+
+        return new
+
     def __eq__(self, other):
         return ((self.nodeType, self.nodeId) == (other.nodeType, other.nodeId))
 
     def __repr__(self):
-        return "Node: ID - {}, Type - {}".format(self.nodeId, self.nodeType)
+        return f'Node: ID - {self.nodeId}, Type - {self.nodeType}, Layer - {self.layer}'
