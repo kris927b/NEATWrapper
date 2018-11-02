@@ -95,7 +95,11 @@ class Genome:
         nodesPerLayer = [0] * self.currLayer
 
         for node in self.nodes:
-            nodesPerLayer[node.layer] += 1
+            try:
+                nodesPerLayer[node.layer] += 1
+            except IndexError:
+                print(f'Node: {node} - currLayer: {self.currLayer}')
+                exit()
 
         for i in range(self.currLayer - 1):
             nodesUpFront = 0
@@ -187,19 +191,69 @@ class Genome:
 
         self.nextNode += 1
         if newNode.layer == connect.outNode.layer:
-            for node in self.nodes:
+            for node in self.nodes[:-1]:
                 if node.layer >= newNode.layer:
                     node.layer += 1
             self.currLayer += 1
 
         self.connectNodes()
 
+    def crossOver(self, parent):
+        child = self.clone()
+        child.nodes = []
+        child.connections = []
+        child.connectedNodes = []
+
+        for connection in self.connections:
+            enabled = True
+            result = self.searchConnection(
+                parent.connections, 
+                connection.innovation
+            )
+
+            if result:
+                if not connection.enabled or not result.enabled:
+                    if random.random() < 0.75:
+                        enabled = False
+
+                if random.random() < 0.5:
+                    child.connections.append(connection.clone(enabled))
+                    child.connectedNodes.append((
+                        connection.inNode.nodeId, 
+                        connection.outNode.nodeId
+                    ))
+                else:
+                    child.connections.append(result.clone(enabled))
+                    child.connectedNodes.append((
+                        result.inNode.nodeId, 
+                        result.outNode.nodeId
+                    ))
+
+            else:
+                child.connections.append(connection.clone(connection.enabled))
+                child.connectedNodes.append((
+                        connection.inNode.nodeId, 
+                        connection.outNode.nodeId
+                ))
+
+        for node in self.nodes:
+            child.nodes.append(node.clone())
+
+        child.connectNodes()
+        return child
+                
     def getNode(self, nodeId):
         for node in self.nodes:
             if node.nodeId == nodeId:
                 return node
         return None
 
+    def searchConnection(self, connections, innovation):
+        for connection in connections:
+            if connection.innovation == innovation:
+                return connection
+
+        return None
 
     def clear(self):
         self.steps = 0

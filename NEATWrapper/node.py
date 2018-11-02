@@ -52,4 +52,4 @@ class Node:
         return ((self.nodeType, self.nodeId) == (other.nodeType, other.nodeId))
 
     def __repr__(self):
-        return "Node: ID - {}, Type - {}".format(self.nodeId, self.nodeType)
+        return f'Node: ID - {self.nodeId}, Type - {self.nodeType}, Layer - {self.layer}'

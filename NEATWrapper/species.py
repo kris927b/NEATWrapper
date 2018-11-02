@@ -127,16 +127,20 @@ class Species:
 
 
     def reproduce(self, innovation):
-        # NotImplementedError("Remember to implement reproduction")
         """
-        Creates a new child through crossover, and then mutates it in one of four ways
+        Creates a new child through crossover, and then mutates it in one of three ways
         """
-        # TODO: STEP 1: Crossover
+        # STEP 1: Crossover
+        parent1 = self.selectGene().clone()
+        parent2 = self.selectGene().clone()
 
-
+        if parent1.fitness >= parent2.fitness:
+            child = parent1.crossOver(parent2)
+        else:
+            child = parent2.crossOver(parent1)
+        
         # STEP 2: Mutation
-        child = self.selectGene().clone()
-
+        # child = self.selectGene().clone()
         child.mutate(innovation)
 
         return child
