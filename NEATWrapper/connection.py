@@ -7,6 +7,7 @@
 # Built-in Libraries
 from random import random, uniform
 from math import e
+from copy import deepcopy
 
 class Connection:
     """
@@ -47,6 +48,18 @@ class Connection:
             self.weight += uniform(-0.5, 0.5)
         else:
             self.weight = uniform(-2, 2)
+
+    def clone(self, enabled):
+        new = Connection(
+            deepcopy(self.inNode), 
+            deepcopy(self.outNode), 
+            deepcopy(self.weight), 
+            innovation=deepcopy(self.innovation)
+        )
+
+        new.enabled = enabled
+
+        return new
 
     def __eq__(self, conn2):
         return ((self.inNode, self.outNode) == (conn2.inNode, conn2.outNode))
