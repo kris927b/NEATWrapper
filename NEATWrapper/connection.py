@@ -10,9 +10,16 @@ from math import e
 from copy import deepcopy
 
 class Connection:
-    """
-    Class for a Connection in the NEAT Algorithm
-    """
+    """Connection - This is a Connection object, to store informatioon about a connection between two nodes. 
+        
+        This object, stores the information of the two connected nodes, the weight of the connection and the innovation number. Moreover, the object contains methods for computing the forward pass of this connection and doing mutation of the weights.
+        
+        Args:
+            _in (Node): Node object that the information has to flow from.
+            _out (Node): Node object that the information has to flow to.
+            weight (Float): Float value of the weight assigned to this connection.
+            innovation (int, optional): Defaults to 0. Innovation number of this type of connection.
+        """
     def __init__(self, _in, _out, weight, innovation=0):
         self.inNode = _in
         self.outNode = _out
