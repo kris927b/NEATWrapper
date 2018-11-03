@@ -1,3 +1,2 @@
-numpy
 gym
 pytest==3.8.2

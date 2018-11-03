@@ -8,9 +8,6 @@
 import random
 from copy import deepcopy
 
-# Third-party libraries
-import numpy as np
-
 # Custom libraries
 from NEATWrapper.node import Node
 from NEATWrapper.connection import Connection
@@ -87,7 +84,7 @@ class Genome:
 
     def getAction(self, _input):
         output = self.forward(_input)
-        action = int(np.argmax(output))
+        action = int(output.index(max(output)))
         return action
 
     def fullyConnected(self):

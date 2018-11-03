@@ -44,12 +44,15 @@ class Node:
             deepcopy(self.layer)
         )
 
+        for connection in self.connections:
+            new.addConnection(connection.clone(connection.enabled))
+
         new.isConnected = deepcopy(self.isConnected)
 
         return new
 
     def __eq__(self, other):
-        return ((self.nodeType, self.nodeId) == (other.nodeType, other.nodeId))
+        return ((self.nodeType, self.nodeId, self.layer) == (other.nodeType, other.nodeId, other.layer))
 
     def __repr__(self):
         return f'Node: ID - {self.nodeId}, Type - {self.nodeType}, Layer - {self.layer}'
