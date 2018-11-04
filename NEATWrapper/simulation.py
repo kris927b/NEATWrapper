@@ -4,6 +4,9 @@
 # Project: NEAT
 # ================================
 
+# Built-in libraries
+import sys
+
 # Third-party libraries
 import gym
 

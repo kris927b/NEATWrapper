@@ -27,7 +27,6 @@ class Population:
 
         for _ in range(self.pop_size):
             gene = Genome(_inSize, _outSize, self.innovationHistory)
-            gene.generateNet()
             self.population.append(gene)
 
     def getGene(self, i):
