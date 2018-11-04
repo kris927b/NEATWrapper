@@ -21,21 +21,52 @@ def innovation():
 def gene(innovation):
     return NEATWrapper.Genome(2, 2, innovation)
 
-def test_geneInit(gene):
+@pytest.fixture
+def gene2(innovation):
+    return NEATWrapper.Genome(2, 2, innovation)
+
+def test_init(gene):
     assert gene.inNodes == 2
     assert gene.outNodes == 2
     assert len(gene.nodes) == 4
     assert len(gene.connections) == 1
     assert len(gene.connectedNodes) == 1
+    assert len(gene.network) == len(gene.nodes)
+    assert gene.nextNode == 5
+    assert gene.currLayer == 2
+    assert gene.steps == 0 and gene.fitness == 0
 
 def test_forward(gene):
     out = gene.forward([2, 2])
     assert type(out) is list
     assert len(out) == 2
+    assert out[0] != 0 or out[1] != 0
+
+def test_connectNodes(gene):
+    [node.clear() for node in gene.nodes]
+    assert not gene.connections[0].inNode.connections
+    gene.connectNodes()
+    assert len(gene.connections[0].inNode.connections) == 1
+
+def test_generateNet(gene):
+    gene.network = []
+    gene.generateNet()
+    layer = 0
+    for node in gene.network:
+        assert node.getLayer() >= layer
+        layer = node.getLayer()
 
 def test_getAction(gene):
     act = gene.getAction([2, 2])
     assert type(act) == int
+    assert act == 0 or act == 1
+
+def test_fullyConnected(gene, innovation):
+    assert not gene.fullyConnected()
+    for _ in range(3):
+        gene.addConnection(innovation)
+    assert gene.fullyConnected()
+    assert innovation.innoNo == 5
 
 def test_addConnection(gene, innovation):
     gene.addConnection(innovation)
@@ -60,6 +91,35 @@ def test_addNode(gene, innovation):
     assert len(gene.connectedNodes) == 3
     assert gene.nextNode == 6
     assert gene.currLayer == 3
+
+def test_crossOver(gene, gene2, innovation):
+    gene.addConnection(innovation)
+    gene.addNode(innovation)
+    child = gene.crossOver(gene2)
+    assert len(child.connections) >= 3
+    assert len(child.nodes) == len(gene.nodes)
+    assert len(child.nodes) != len(gene2.nodes)
+
+def test_getNode(gene):
+    node = gene.getNode(3)
+    assert isinstance(node, NEATWrapper.Node)
+    assert node.nodeType == 'output'
+    assert node.nodeId == 3
+
+def test_searchConnection(gene, gene2):
+    gene2.connections.append(
+        gene.connections[0].clone(gene.connections[0].enabled)
+    )
+    conn = gene.searchConnection(
+        gene2.connections, 
+        gene.connections[0].innovation
+    )
+    assert isinstance(conn, NEATWrapper.Connection)
+    conn = gene.searchConnection(
+        gene2.connections, 
+        10
+    )
+    assert not conn
 
 def test_clear(gene):
     gene.steps = 10

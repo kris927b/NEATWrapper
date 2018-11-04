@@ -13,13 +13,17 @@ from NEATWrapper.node import Node
 from NEATWrapper.connection import Connection
 
 class Genome:
+    """Genome - Class for a Genome in the NEAT Algorithm
+        
+    Class for containing all information about an actor in the simulation. Contains information of the genetic structure, plus methods for predicting the next move. 
+    
+    Args:
+        _in (Int): Number of input nodes
+        _out (Int): Number of output nodes
+        innovationHistory (Innovation): Innovation for all the genes in the population.
+        clone (bool, optional): Defaults to False. Whether or not the gene is a clone of a previous created gene.
     """
-    Class for a Genome in the NEAT Algorithm
-    @param _in: Number of input nodes \n
-    @param _out: Number of output nodes \n
-    @param innovationHistory: innovationHistory class for all the genes in the population. Described in the innovation.py file.
-    @param clone: bool whether or not the gene is a clone of a previous created gene.
-    """
+
     def __init__(self, _in, _out, innovationHistory, clone=False):
         self.nodes = []
         self.inNodes = _in
@@ -28,7 +32,6 @@ class Genome:
         self.connections = []
         self.network = []
         self.nextNode = 1
-        self.maxInLayer = 10
         self.currLayer = 2
         self.steps = 0
         self.fitness = 0
@@ -45,6 +48,7 @@ class Genome:
                 self.nextNode += 1
         
             self.addConnection(innovationHistory)
+            self.generateNet()
 
 
     def forward(self, _input):
@@ -233,8 +237,7 @@ class Genome:
                         connection.outNode.nodeId
                 ))
 
-        for node in self.nodes:
-            child.nodes.append(node.clone())
+        child.nodes = [node.clone() for node in self.nodes]
 
         child.connectNodes()
         return child
@@ -258,9 +261,9 @@ class Genome:
 
     def clone(self):
         clone = Genome(self.inNodes, self.outNodes, None, clone=True)
-        clone.connections = deepcopy(self.connections)
+        clone.connections = [connection.clone(connection.enabled) for connection in self.connections]
         clone.connectedNodes = deepcopy(self.connectedNodes)
-        clone.nodes = deepcopy(self.nodes)
+        clone.nodes = [node.clone() for node in self.nodes]
         clone.nextNode = deepcopy(self.nextNode)
         clone.currLayer = deepcopy(self.currLayer)
         return clone

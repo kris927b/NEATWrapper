@@ -10,7 +10,7 @@ This is a project that is still in progress. It is not fully working yet. In the
 - [ ] Creating tests for all classes
   - [X] Creating tests for Node object
   - [X] Creating tests for Connection object
-  - [ ] Creating tests for Genome object
+  - [X] Creating tests for Genome object
   - [X] Creating tests for Innovation object
   - [ ] Creating tests for Species object
   - [ ] Creating tests for Population object
