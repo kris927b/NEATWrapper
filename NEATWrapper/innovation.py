@@ -17,7 +17,7 @@ class Innovation:
     """
     def __init__(self):
         self.connectionsDone = []
-        self.innoNo = 0
+        self.innoNo = 1
 
     def checkConnection(self, node1, node2, weight=None):
         newConnection = Connection(node1,
@@ -33,9 +33,9 @@ class Innovation:
                 break
 
         if not gotInnovation:
-            self.innoNo += 1
             newConnection.setInnovationNo(deepcopy(self.innoNo))
             self.connectionsDone.append(newConnection)
+            self.innoNo += 1
 
         return newConnection
 
