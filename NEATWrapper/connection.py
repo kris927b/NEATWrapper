@@ -7,7 +7,7 @@
 # Built-in Libraries
 from random import random, uniform
 from math import e
-from copy import deepcopy
+from copy import copy
 
 class Connection:
     """Connection - This is a Connection object, to store informatioon about a connection between two nodes. 
@@ -58,10 +58,10 @@ class Connection:
 
     def clone(self, enabled):
         new = Connection(
-            deepcopy(self.inNode), 
-            deepcopy(self.outNode), 
-            deepcopy(self.weight), 
-            innovation=deepcopy(self.innovation)
+            self.inNode.clone(), 
+            self.outNode.clone(), 
+            copy(self.weight), 
+            innovation=copy(self.innovation)
         )
 
         new.enabled = enabled

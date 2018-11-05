@@ -27,7 +27,7 @@ class Simulation:
         self.verbosity = verbosity
         self.currGen = 1
 
-    def run(self, generations, render=False):
+    def run(self, generations, render=False, graph=True):
         """
         Function for running X number of generations of the simulation. 
         """
@@ -36,31 +36,46 @@ class Simulation:
             for i in range(self.pop.size()):
                 obs = self.env.reset()
                 gene = self.pop.getGene(i)
-                for step in range(self._maxSteps):
-                    # self.env.render()
+                r = 0
+                for _ in range(self._maxSteps):
+                    if render:
+                        self.env.render()
                     action = gene.getAction(obs)
-                    obs, _, done, _ = self.env.step(action)
+                    obs, reward, done, _ = self.env.step(action)
+                    r += reward
+                    sys.stdout.write(f'\rGene {i+1}) no. steps {r} ')
+                    sys.stdout.flush()
                     if done:
                         if self.verbosity == 2:
-                            print(f'Gene {i}) no. steps {step+1}')
-                        gene.steps = step + 1
-                        steps.append(gene.steps)
+                            print(f'Gene {i+1}) reward {r}')
+                        gene.steps = r
+                        steps.append(r)
+                        r = 0
                         break
+            print(f'\nGeneration Max Reward: {max(steps)}')
+            print(f'Generation Min Reward: {min(steps)}')
+            if graph:
+                self.pop.getGene(steps.index(max(steps))).drawGenome()
             self.pop.naturalSelection()
-            print(f'Generation Best: Steps: {max(steps)}')
-            print(f'Finished generation {self.currGen}')
+            print(f'=============== Finished generation {self.currGen} ===============')
             self.currGen += 1
 
     def runBest(self):
         obs = self.env.reset()
         gene = self.pop.getBestGene()
-        for step in range(500):
+        score = self.pop.getBestScore()
+        r = 0
+        for _ in range(self._maxSteps):
             self.env.render()
             action = gene.getAction(obs)
             obs, reward, done, _ = self.env.step(action)
-            sys.stdout.write('\r' + str(reward + step))
+            r += reward
+            sys.stdout.write(f'\rBest Gene) no. steps {r} ')
             sys.stdout.flush()
             if done:
                 break
-        print("\nThe best gene got {} in reward!!".format(reward + step))
-        # self.pop.showBest()
+        print(f"\nThe best gene got {r} in reward!!")
+        print("=====================================================")
+        if r < score:
+            self.pop.clearBest()
+        gene.drawGenome()
