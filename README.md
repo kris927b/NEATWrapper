@@ -13,7 +13,7 @@ This is a project that is still in progress. It is not fully working yet. In the
   - [X] Creating tests for Genome object
   - [X] Creating tests for Innovation object
   - [ ] Creating tests for Species object
-  - [ ] Creating tests for Population object
+  - [X] Creating tests for Population object
 - [ ] Optimizing code base
 - [X] Implementing crossover for two of the agents
   - [X] Implmenting method for selecting two parent genes for crossover

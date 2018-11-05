@@ -37,10 +37,11 @@ def test_init(gene):
     assert gene.steps == 0 and gene.fitness == 0
 
 def test_forward(gene):
+    gene.connections[0].weight = 1
     out = gene.forward([2, 2])
     assert type(out) is list
     assert len(out) == 2
-    assert out[0] != 0 or out[1] != 0
+    assert out[0] == 2 or out[1] == 2
 
 def test_connectNodes(gene):
     [node.clear() for node in gene.nodes]
