@@ -6,7 +6,11 @@
 
 # Built-in libraries
 import random
-from copy import deepcopy
+from copy import copy
+
+# Third-party libraries
+import networkx as nx
+import matplotlib.pyplot as plt
 
 # Custom libraries
 from NEATWrapper.node import Node
@@ -46,7 +50,7 @@ class Genome:
                 node = Node(self.nextNode, 'output', layer=1)
                 self.nodes.append(node)
                 self.nextNode += 1
-        
+
             self.addConnection(innovationHistory)
             self.generateNet()
 
@@ -109,7 +113,7 @@ class Genome:
 
             maxConnections += nodesPerLayer[i] * nodesUpFront
 
-        if maxConnections == len(self.connections):
+        if len(self.connections) == maxConnections:
             return True
 
         return False
@@ -262,10 +266,10 @@ class Genome:
     def clone(self):
         clone = Genome(self.inNodes, self.outNodes, None, clone=True)
         clone.connections = [connection.clone(connection.enabled) for connection in self.connections]
-        clone.connectedNodes = deepcopy(self.connectedNodes)
+        clone.connectedNodes = [(copy(conn[0]), copy(conn[1])) for conn in self.connectedNodes]
         clone.nodes = [node.clone() for node in self.nodes]
-        clone.nextNode = deepcopy(self.nextNode)
-        clone.currLayer = deepcopy(self.currLayer)
+        clone.nextNode = copy(self.nextNode)
+        clone.currLayer = copy(self.currLayer)
         return clone
     
     def mutate(self, innovationHistory):
@@ -292,8 +296,58 @@ class Genome:
             # 2 % of the time add a new node
             self.addNode(innovationHistory)
 
+    def drawGenome(self):
+        G = nx.Graph()
+        for i in range(len(self.nodes)):
+            G.add_node(i+1, data=self.nodes[i])
+        
+        for i in range(len(self.connections)):
+            if self.connections[i].enabled:
+                G.add_edge(self.connections[i].inNode.nodeId,
+                    self.connections[i].outNode.nodeId,
+                    data=self.connections[i]
+                )
+
+        nodesPerLayer = [0] * self.currLayer
+        nodeInLayer = [1] * self.currLayer
+        for node in self.nodes:
+            nodesPerLayer[node.layer] += 1
+
+        pos = dict()
+
+        for i in range(len(self.nodes)):
+            pos[self.nodes[i].nodeId] = [
+                translate(self.nodes[i].layer, 
+                    0, 
+                    self.currLayer, 
+                    -0.5, 
+                    0.5
+                ),
+                translate(nodeInLayer[self.nodes[i].layer], 
+                    1, 
+                    nodesPerLayer[self.nodes[i].layer] if nodesPerLayer[self.nodes[i].layer] != 1 else 2, 
+                    1, 
+                    -1
+                )
+            ]
+            nodeInLayer[self.nodes[i].layer] += 1
+
+        nx.draw_networkx(G, pos=pos, with_labels=True, font_weight='bold', label="Genome Score: {}".format(self.steps))
+        plt.show()
+
     def __repr__(self):
         return "Genome: \n===> Nodes - {}, \n===> connections - {}".format(
             self.nodes, 
             self.connections
         ) 
+
+def translate(value, leftMin, leftMax, rightMin, rightMax):
+    # Figure out how 'wide' each range is
+    leftSpan = leftMax - leftMin
+    rightSpan = rightMax - rightMin
+
+    # Convert the left range into a 0-1 range (float)
+    valueScaled = float(value - leftMin) / float(leftSpan)
+
+    # Convert the 0-1 range into a value in the right range.
+    return rightMin + (valueScaled * rightSpan)

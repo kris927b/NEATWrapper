@@ -172,9 +172,7 @@ class Species:
         Used in the process of finding the species with the highest average fitness.
         """
 
-        _sum = 0
-        for gene in self.members:
-            _sum += gene.fitness
+        _sum = sum([gene.fitness for gene in self.members])
 
         self.avgFitness = _sum/self.size()
 
@@ -190,9 +188,7 @@ class Species:
         if self.size() == 1:
             return self.members[0]
 
-        totalFitness = 0
-        for member in self.members:
-            totalFitness += member.fitness
+        totalFitness = sum([gene.fitness for gene in self.members])
 
         r = uniform(0, totalFitness)
         _sum = 0
@@ -217,8 +213,8 @@ class Species:
         """
 
         # STEP 1: Crossover
-        parent1 = self.selectGene().clone()
-        parent2 = self.selectGene().clone()
+        parent1 = self.selectGene()
+        parent2 = self.selectGene()
 
         if parent1.fitness >= parent2.fitness:
             child = parent1.crossOver(parent2)

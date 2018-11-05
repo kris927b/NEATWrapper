@@ -44,8 +44,8 @@ class Node:
             deepcopy(self.layer)
         )
 
-        for connection in self.connections:
-            new.addConnection(connection.clone(connection.enabled))
+        # for connection in self.connections:
+        #     new.addConnection(connection.clone(connection.enabled))
 
         new.isConnected = deepcopy(self.isConnected)
 

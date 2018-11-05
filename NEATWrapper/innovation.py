@@ -39,6 +39,9 @@ class Innovation:
 
         return newConnection
 
+    def size(self):
+        return len(self.connectionsDone)
+
     def __repr__(self):
         return "Innovation History: {}".format(self.connectionsDone)
 

@@ -1,2 +1,4 @@
 gym==0.10.8
 pytest==3.8.2
+networkx==2.1
+matplotlib==2.2.2

@@ -79,7 +79,7 @@ def test_calcFitness(pop):
 
     for i in range(pop.size()):
         gene = pop.getGene(i)
-        assert gene.fitness == (10/400)
+        assert gene.fitness == (100/40)
 
 def test_speciate(pop):
     assert len(pop.species) == 0
@@ -119,7 +119,7 @@ def test_cullSpecies(pop):
     # * Testing that the shareFitness function performs it job in this context.
     for i in range(pop.size()):
         gene = pop.getGene(i)
-        assert gene.fitness <= (10/400)
+        assert gene.fitness <= (100/40)
 
     # * Testing that the getAvgFitness function performs it job in this context
     for s in pop.species:
@@ -134,7 +134,7 @@ def test_getAvgFitnessSum(pop):
     pop.cullSpecies()
     [s.getAvgFitness() for s in pop.species if s.size() > 0]
     _sum = sum([s.avgFitness for s in pop.species])
-    avgfit = pop.getAvgFitnessSum()*len(pop.species)
+    avgfit = pop.getAvgFitnessSum()
     assert isinstance(avgfit, float)
     assert avgfit == _sum
 

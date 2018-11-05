@@ -42,6 +42,7 @@ class Population:
         self.cullSpecies()
         self.findBestGene()
         self.killStaleSpecies()
+        self.killBadSpecies()
 
         self.population = []
         avgSum = self.getAvgFitnessSum()
@@ -57,13 +58,19 @@ class Population:
         for gene in self.population:
             gene.generateNet()
 
+        print(f'Number of innovations: {self.innovationHistory.size()}')
+
     def findBestGene(self):
         gensBestGene = self.species[0].members[0]
         gensBestScore = gensBestGene.steps
 
         if gensBestScore > self.bestScore:
             self.bestScore = gensBestScore
-            self.bestGene = gensBestGene.clone()
+            self.bestGene = gensBestGene
+    
+    def killBadSpecies(self):
+        avgSum = self.getAvgFitnessSum()
+        self.species[:] = [s for s in self.species if int(s.avgFitness / avgSum * self.pop_size) >= 1 and len(s.members) > 0]
 
     def getBestGene(self):
         return self.bestGene
@@ -72,12 +79,10 @@ class Population:
         return self.bestScore
 
     def calcFitness(self):
-        sums = 0
-        for gene in self.population:
-            sums += gene.steps**2
+        sums = sum([gene.steps for gene in self.population])
         
         for gene in self.population:
-            gene.fitness = gene.steps / sums
+            gene.fitness = gene.steps**2 / sums
         
     def speciate(self):
         for s in self.species:
@@ -112,12 +117,13 @@ class Population:
                 s.getAvgFitness()
 
     def getAvgFitnessSum(self):
-        _sum = 0
-        for s in self.species:
-            _sum += s.avgFitness
+        _sum = sum([s.avgFitness for s in self.species])
 
-        return _sum/len(self.species)
+        return _sum
 
+    def clearBest(self):
+        self.bestGene = None
+        self.bestScore = -inf
 
 if __name__ == '__main__':
     neat = Population(1, 2, 2)

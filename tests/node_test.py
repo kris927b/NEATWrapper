@@ -67,7 +67,7 @@ def test_clone(node, conn):
     assert clone.nodeId == node.nodeId
     assert clone.nodeType == node.nodeType
     assert clone.layer == node.layer
-    assert len(clone.connections) == len(node.connections)
+    assert len(clone.connections) == 0
     assert clone.isConnected == node.isConnected
 
 def test_forward(node, conn):
